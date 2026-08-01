@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JON — Web Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="site-bg" aria-hidden="true"></div>
+
+<header class="tabbar">
+  <div class="tabbar-inner">
+    <div class="logo"><span class="logo-mark">J</span> JON</div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-right" id="navRight">
+      <nav class="tabs" id="navTabs">
+        <a href="index.html" data-tab="home">Home</a>
+        <a href="portfolio.html" data-tab="portfolio">Portfolio</a>
+        <a href="reviews.html" data-tab="reviews">Reviews</a>
+      </nav>
+      <a href="contact.html" class="tabbar-cta">Start a project</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="space-scrim" aria-hidden="true"></div>
+    <div class="eyebrow-top">Available for new projects</div>
+    <div class="wrap hero-center">
+      <h1 class="headline">Websites Built to Grow Your Business</h1>
+      <p class="hero-sub">Fast, modern websites backed by proactive monitoring, ongoing support, and reliable performance.</p>
+      <div class="btn-row">
+        <a href="portfolio.html" class="btn btn-primary">View portfolio</a>
+        <a href="contact.html" class="btn btn-ghost">Contact me</a>
+      </div>
+      <div class="stat-log mono">
+        <div><span class="k">$</span> sites_shipped <span class="v">— 24</span></div>
+        <div><span class="k">$</span> avg_lighthouse_score <span class="v">— 96</span></div>
+        <div><span class="k">$</span> years_building <span class="v">— 6</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+<script src="script.js"></script>
+</body>
+</html>

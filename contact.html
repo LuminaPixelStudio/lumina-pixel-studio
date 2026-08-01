@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — JON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="site-bg" aria-hidden="true"></div>
+
+<header class="tabbar">
+  <div class="tabbar-inner">
+    <div class="logo"><span class="logo-mark">J</span> JON</div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-right" id="navRight">
+      <nav class="tabs" id="navTabs">
+        <a href="index.html" data-tab="home">Home</a>
+        <a href="portfolio.html" data-tab="portfolio">Portfolio</a>
+        <a href="reviews.html" data-tab="reviews">Reviews</a>
+      </nav>
+      <a href="contact.html" class="tabbar-cta">Start a project</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="page-head wrap reveal">
+    <div class="eyebrow">Get in touch</div>
+    <h1>Contact me</h1>
+    <p>Have a project in mind? Tell me a bit about it and I'll reply within a day or two.</p>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="line-item">
+            <span class="k">Email</span>
+            <a class="v" href="mailto:hello@jon.dev">hello@jon.dev</a>
+          </div>
+          <div class="line-item">
+            <span class="k">Based in</span>
+            <span class="v">Remote — working with clients worldwide</span>
+          </div>
+          <div class="line-item">
+            <span class="k">Response time</span>
+            <span class="v">Within 1–2 business days</span>
+          </div>
+          <div class="line-item">
+            <span class="k">Elsewhere</span>
+            <div class="social-row">
+              <a href="#">GitHub</a>
+              <a href="#">LinkedIn</a>
+              <a href="#">X / Twitter</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="browser form-browser reveal">
+          <div class="browser-bar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <div class="url-pill mono">jon.dev/contact — new_message.form</div>
+          </div>
+          <div class="browser-body">
+            <form id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+              <input type="hidden" name="form-name" value="contact">
+              <p style="position:absolute; left:-9999px;">
+                <label>Leave this field empty: <input name="bot-field"></label>
+              </p>
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" placeholder="Your name" required>
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@company.com" required>
+              </div>
+              <div class="field">
+                <label for="message">Project details</label>
+                <textarea id="message" name="message" rows="4" placeholder="What are you building, and what's your timeline?" required></textarea>
+              </div>
+              <button type="submit" class="submit-btn">Send message</button>
+              <p class="form-status" id="formStatus" role="status"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+<script src="script.js"></script>
+</body>
+</html>
