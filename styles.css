@@ -242,9 +242,15 @@ section.hero{ padding:0; height:calc(100vh - 65px); width:100%; display:flex; al
 }
 .eyebrow-top::before{ content:''; width:7px; height:7px; border-radius:50%; background:var(--accent-2); box-shadow:0 0 0 4px rgba(110,231,192,0.15); }
 
+.brand-tag{
+  font-family:'JetBrains Mono', monospace; font-size:0.8rem; font-weight:600;
+  letter-spacing:0.05em; text-transform:uppercase; color:var(--accent-2);
+  margin-bottom:14px;
+}
+
 h1.headline{
-  font-size:clamp(2.6rem, 5.5vw, 4.4rem);
-  font-weight:700; line-height:1.1; margin-bottom:20px;
+  font-size:clamp(2rem, 3.6vw, 3rem);
+  font-weight:700; line-height:1.15; margin-bottom:18px;
   color:#FFFFFF;
 }
 
