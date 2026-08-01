@@ -235,14 +235,14 @@ section.hero{ padding:0; height:calc(100vh - 65px); width:100%; display:flex; al
 .eyebrow-top::before{ content:''; width:7px; height:7px; border-radius:50%; background:var(--accent-2); box-shadow:0 0 0 4px rgba(110,231,192,0.15); }
 
 h1.headline{
-  font-size:clamp(2.3rem, 4.4vw, 3.6rem);
-  font-weight:700; line-height:1.05; margin-bottom:20px;
+  font-size:clamp(1.9rem, 3.4vw, 2.9rem);
+  font-weight:700; line-height:1.15; margin-bottom:16px;
   color:#FFFFFF;
 }
 
-.hero-sub{ color:#FFFFFF; font-size:1.08rem; max-width:46ch; margin-bottom:32px; }
+.hero-sub{ color:#FFFFFF; font-size:1.02rem; max-width:52ch; margin-bottom:26px; }
 
-.btn-row{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:40px; }
+.btn-row{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:32px; }
 .btn{
   padding:13px 24px; border-radius:9px; font-weight:600; font-size:0.92rem;
   transition:transform 0.15s ease, box-shadow 0.15s ease;
