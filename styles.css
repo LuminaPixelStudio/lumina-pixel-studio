@@ -211,7 +211,7 @@ section.hero{ position:relative; overflow:hidden; }
 
 
 html, body{ height:100%; }
-body.home-page{ overflow-y:auto; overflow-x:hidden; }
+body.home-page{ overflow:hidden; height:100%; }
 
 .hero-center{
   position:relative; z-index:1;
@@ -225,7 +225,7 @@ body.home-page{ overflow-y:auto; overflow-x:hidden; }
 }
 
 /* ---------------- HERO (home page only) ---------------- */
-section.hero{ padding:0; min-height:calc(100vh - 64px); width:100%; display:flex; align-items:center; }
+section.hero{ padding:0; height:calc(100vh - 65px); width:100%; display:flex; align-items:center; }
 
 .eyebrow-top{
   position:absolute; top:28px; left:50%; transform:translateX(-50%);
