@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(() => {
         if (btn) { btn.disabled = false; btn.textContent = btnDefaultText; }
         if (status) {
-          status.textContent = "Something went wrong — please email hello@jon.dev directly.";
+          status.textContent = "Something went wrong — please email jonathon.g.henry@gmail.com directly.";
           status.className = 'form-status form-status-error';
         }
       });
