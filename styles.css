@@ -243,8 +243,8 @@ section.hero{ padding:0; height:calc(100vh - 65px); width:100%; display:flex; al
 .eyebrow-top::before{ content:''; width:7px; height:7px; border-radius:50%; background:var(--accent-2); box-shadow:0 0 0 4px rgba(110,231,192,0.15); }
 
 h1.headline{
-  font-size:clamp(1.9rem, 3.4vw, 2.9rem);
-  font-weight:700; line-height:1.15; margin-bottom:16px;
+  font-size:clamp(2.6rem, 5.5vw, 4.4rem);
+  font-weight:700; line-height:1.1; margin-bottom:20px;
   color:#FFFFFF;
 }
 
