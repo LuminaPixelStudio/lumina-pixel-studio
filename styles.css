@@ -325,6 +325,7 @@ section{ padding:60px 0 90px; }
 .proj-card{ transition:transform 0.25s ease, box-shadow 0.25s ease; }
 .proj-card:hover{ transform:translateY(-5px); }
 .proj-shot{ height:150px; position:relative; overflow:hidden; }
+.proj-shot img{ width:100%; height:100%; object-fit:cover; display:block; }
 .proj-shot .shape{ position:absolute; border-radius:50%; filter:blur(2px); opacity:0.55; }
 
 .shot-1{ background:linear-gradient(160deg,#241a12,#171a23); }
