@@ -228,7 +228,7 @@ body.home-page{ overflow:hidden; height:100%; }
 }
 .hero-center .hero-sub{ margin-left:auto; margin-right:auto; }
 .hero-center .btn-row{ justify-content:center; }
-.hero-center .feature-row{ margin-top:6px; }
+.hero-center .feature-row{ margin-top:14px; }
 
 /* ---------------- HERO (home page only) ---------------- */
 section.hero{ padding:0; height:calc(100vh - 65px); width:100%; display:flex; align-items:center; }
@@ -250,13 +250,13 @@ section.hero{ padding:0; height:calc(100vh - 65px); width:100%; display:flex; al
 
 h1.headline{
   font-size:clamp(2rem, 3.6vw, 3rem);
-  font-weight:700; line-height:1.15; margin-bottom:18px;
+  font-weight:700; line-height:1.15; margin-bottom:26px;
   color:#FFFFFF;
 }
 
-.hero-sub{ color:#FFFFFF; font-size:1.02rem; max-width:52ch; margin-bottom:26px; }
+.hero-sub{ color:#FFFFFF; font-size:1.02rem; max-width:52ch; margin-bottom:34px; }
 
-.btn-row{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:32px; }
+.btn-row{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:40px; }
 .btn{
   padding:13px 24px; border-radius:9px; font-weight:600; font-size:0.92rem;
   transition:transform 0.15s ease, box-shadow 0.15s ease;
@@ -329,8 +329,6 @@ section{ padding:60px 0 90px; }
 
 .shot-1{ background:linear-gradient(160deg,#241a12,#171a23); }
 .shot-1 .shape{ width:120px; height:120px; background:var(--accent); top:-30px; right:-20px; }
-.shot-ironhouse{ position:relative; overflow:hidden; }
-.shot-ironhouse img{ width:100%; height:100%; object-fit:cover; object-position:top; display:block; }
 .shot-2{ background:linear-gradient(160deg,#141f1c,#171a23); }
 .shot-2 .shape{ width:100px; height:100px; background:var(--accent-2); bottom:-30px; left:10px; }
 .shot-3{ background:linear-gradient(160deg,#1a1730,#171a23); }
