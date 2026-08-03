@@ -61,17 +61,19 @@
               <p style="position:absolute; left:-9999px;">
                 <label>Leave this field empty: <input name="bot-field"></label>
               </p>
-              <div class="field">
-                <label for="name">Name</label>
-                <input id="name" name="name" type="text" placeholder="Your name" required>
-              </div>
-              <div class="field">
-                <label for="email">Email</label>
-                <input id="email" name="email" type="email" placeholder="you@company.com" required>
-              </div>
-              <div class="field">
-                <label for="message">Project details</label>
-                <textarea id="message" name="message" rows="4" placeholder="What are you building, and what's your timeline?" required></textarea>
+              <div class="field-group">
+                <div class="field">
+                  <label for="name">Name</label>
+                  <input id="name" name="name" type="text" placeholder="Your name" required>
+                </div>
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input id="email" name="email" type="email" placeholder="you@company.com" required>
+                </div>
+                <div class="field">
+                  <label for="message">Project details</label>
+                  <textarea id="message" name="message" rows="4" placeholder="What are you building, and what's your timeline?" required></textarea>
+                </div>
               </div>
               <button type="submit" class="submit-btn">Send message</button>
               <p class="form-status" id="formStatus" role="status"></p>

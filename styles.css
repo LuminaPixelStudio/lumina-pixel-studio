@@ -414,24 +414,28 @@ section{ padding:60px 0 90px; }
 .contact-center{ display:flex; justify-content:center; }
 
 .form-box{
-  width:100%; max-width:520px;
+  width:100%; max-width:320px;
   background:#000000; border-radius:var(--radius);
 }
-.form-box .browser-body{ padding:34px 30px; }
-.field{ margin-bottom:18px; }
+.form-box .browser-body{ padding:28px 22px; }
+
+.field-group{
+  background:var(--ink); border:1px solid var(--line); border-radius:10px;
+  overflow:hidden; margin-bottom:18px;
+}
+.field{ padding:14px 16px; border-bottom:1px solid var(--line); }
+.field:last-child{ border-bottom:none; }
 .field label{
   display:block; font-family:'JetBrains Mono', monospace; font-size:0.72rem;
   color:var(--text-dim); margin-bottom:7px;
 }
 .field input, .field textarea{
-  width:100%; background:var(--ink); border:1px solid var(--line); border-radius:8px;
-  padding:12px 14px; color:var(--text); font-family:'Inter',sans-serif; font-size:0.92rem;
+  width:100%; background:transparent; border:none;
+  padding:0; color:var(--text); font-family:'Inter',sans-serif; font-size:0.92rem;
   resize:vertical;
 }
-.field input:focus, .field textarea:focus{
-  outline:none; border-color:var(--accent-2);
-  box-shadow:0 0 0 3px rgba(110,231,192,0.12);
-}
+.field input:focus, .field textarea:focus{ outline:none; }
+.field:focus-within{ background:rgba(110,231,192,0.06); }
 .submit-btn{
   background:var(--accent); color:#171308; border:none; border-radius:9px;
   padding:13px 26px; font-weight:600; font-size:0.92rem; cursor:pointer;
