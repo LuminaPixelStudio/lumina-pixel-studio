@@ -373,11 +373,13 @@ section{ padding:60px 0 90px; }
 }
 .price-body{ padding:34px 28px 30px; }
 .price-name{ font-size:1.3rem; margin-bottom:4px; }
+.price-emoji{ font-size:1.15rem; }
 .price-for{ color:var(--text-dim); font-size:0.86rem; margin-bottom:20px; }
 .price-amount{ display:flex; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:6px; }
 .price-figure{ font-family:'Space Grotesk', sans-serif; font-size:2.1rem; font-weight:700; color:var(--text); }
 .price-period{ color:var(--text-dim); font-size:0.82rem; width:100%; }
 .price-offer-note{ color:var(--accent-2); font-size:0.78rem; margin-bottom:24px; }
+.price-includes{ color:var(--text); font-size:0.86rem; font-weight:600; margin-bottom:6px; margin-top:20px; }
 .price-features{ list-style:none; margin-bottom:28px; margin-top:20px; display:flex; flex-direction:column; gap:12px; }
 .price-features li{
   font-size:0.88rem; color:var(--text); padding-left:24px; position:relative; line-height:1.4;
