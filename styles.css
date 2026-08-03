@@ -358,7 +358,11 @@ section{ padding:60px 0 90px; }
 .pricing-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; align-items:start; }
 @media (max-width:960px){ .pricing-grid{ grid-template-columns:1fr; max-width:420px; margin:0 auto; } }
 
-.price-card{ position:relative; transition:transform 0.25s ease, box-shadow 0.25s ease; }
+.price-card{
+  position:relative; background:#000000; border:1px solid var(--line);
+  border-radius:var(--radius); overflow:hidden;
+  transition:transform 0.25s ease, box-shadow 0.25s ease;
+}
 .price-card:hover{ transform:translateY(-5px); }
 .price-featured{ border-color:var(--accent); box-shadow:0 30px 70px -25px rgba(255,182,72,0.25); }
 .price-badge{
@@ -367,13 +371,13 @@ section{ padding:60px 0 90px; }
   font-size:0.68rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
   padding:5px 14px; border-radius:100px; z-index:2;
 }
-.price-body{ padding:26px 24px 28px; }
+.price-body{ padding:34px 28px 30px; }
 .price-name{ font-size:1.3rem; margin-bottom:4px; }
-.price-tagline{ color:var(--text-dim); font-size:0.86rem; margin-bottom:18px; }
-.price-amount{ display:flex; align-items:baseline; gap:6px; margin-bottom:22px; }
+.price-tagline{ color:var(--text-dim); font-size:0.86rem; margin-bottom:20px; }
+.price-amount{ display:flex; align-items:baseline; gap:6px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--line); }
 .price-figure{ font-family:'Space Grotesk', sans-serif; font-size:2.1rem; font-weight:700; color:var(--text); }
 .price-period{ color:var(--text-dim); font-size:0.82rem; }
-.price-features{ list-style:none; margin-bottom:26px; display:flex; flex-direction:column; gap:11px; }
+.price-features{ list-style:none; margin-bottom:28px; display:flex; flex-direction:column; gap:12px; }
 .price-features li{
   font-size:0.88rem; color:var(--text); padding-left:24px; position:relative; line-height:1.4;
 }
