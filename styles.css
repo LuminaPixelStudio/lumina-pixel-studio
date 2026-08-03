@@ -358,25 +358,39 @@ section{ padding:60px 0 90px; }
 .pricing-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; align-items:start; }
 @media (max-width:960px){ .pricing-grid{ grid-template-columns:1fr; max-width:420px; margin:0 auto; } }
 
+.sale-banner{
+  text-align:center; font-family:'JetBrains Mono', monospace; font-weight:700;
+  font-size:0.9rem; letter-spacing:0.03em; color:#171308;
+  background:linear-gradient(90deg, var(--accent), #ffcf85);
+  padding:12px 20px; border-radius:100px; margin-bottom:36px;
+}
+
 .price-card{
-  position:relative; background:#000000; border:1px solid var(--line);
+  position:relative; background:#000000;
   border-radius:var(--radius); overflow:hidden;
   transition:transform 0.25s ease, box-shadow 0.25s ease;
 }
 .price-card:hover{ transform:translateY(-5px); }
-.price-featured{ border-color:var(--accent); box-shadow:0 30px 70px -25px rgba(255,182,72,0.25); }
+.price-featured{ box-shadow:0 30px 70px -25px rgba(255,182,72,0.3); }
 .price-badge{
   position:absolute; top:-13px; left:50%; transform:translateX(-50%);
   background:var(--accent); color:#171308; font-family:'JetBrains Mono', monospace;
   font-size:0.68rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
   padding:5px 14px; border-radius:100px; z-index:2;
 }
+.price-sale-tag{
+  position:absolute; top:16px; right:16px; z-index:2;
+  background:#ff5f57; color:#fff; font-family:'JetBrains Mono', monospace;
+  font-size:0.66rem; font-weight:700; letter-spacing:0.03em;
+  padding:5px 10px; border-radius:100px;
+}
 .price-body{ padding:34px 28px 30px; }
 .price-name{ font-size:1.3rem; margin-bottom:4px; }
 .price-tagline{ color:var(--text-dim); font-size:0.86rem; margin-bottom:20px; }
-.price-amount{ display:flex; align-items:baseline; gap:6px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--line); }
+.price-amount{ display:flex; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:28px; }
+.price-was{ font-family:'Space Grotesk', sans-serif; font-size:1.15rem; color:var(--text-dim); text-decoration:line-through; text-decoration-color:#ff5f57; }
 .price-figure{ font-family:'Space Grotesk', sans-serif; font-size:2.1rem; font-weight:700; color:var(--text); }
-.price-period{ color:var(--text-dim); font-size:0.82rem; }
+.price-period{ color:var(--text-dim); font-size:0.82rem; width:100%; }
 .price-features{ list-style:none; margin-bottom:28px; display:flex; flex-direction:column; gap:12px; }
 .price-features li{
   font-size:0.88rem; color:var(--text); padding-left:24px; position:relative; line-height:1.4;
