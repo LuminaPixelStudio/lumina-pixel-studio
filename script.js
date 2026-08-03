@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(cycle, 1800);
 });
 
-// Contact form submission (Netlify Forms)
+// Contact form submission (Web3Forms)
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('contactForm');
   if (!form) return;
@@ -106,16 +106,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const data = new FormData(form);
 
-    fetch('/', {
+    fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(data).toString()
+      headers: { 'Accept': 'application/json' },
+      body: data
     })
-      .then((res) => {
-        if (!res.ok) throw new Error('Network response was not ok');
+      .then((res) => res.json())
+      .then((json) => {
+        if (!json.success) throw new Error(json.message || 'Submission failed');
         if (btn) btn.textContent = 'Sent ✓';
         if (status) {
-          status.textContent = "Thanks — I'll get back to you within 1–2 business days.";
+          status.textContent = "Thanks — I'll get back to you within 1 business day.";
           status.className = 'form-status form-status-ok';
         }
         form.reset();
@@ -124,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(() => {
         if (btn) { btn.disabled = false; btn.textContent = btnDefaultText; }
         if (status) {
-          status.textContent = "Something went wrong — please email jonathon.g.henry@gmail.com directly.";
+          status.textContent = "Something went wrong — please email support@luminapixelstudio.com directly.";
           status.className = 'form-status form-status-error';
         }
       });
