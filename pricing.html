@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Lumina Pixel Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="site-bg" aria-hidden="true"></div>
+
+<header class="tabbar">
+  <div class="tabbar-inner">
+    <div class="logo">
+      <span class="logo-mark">L</span>
+      <span class="logo-text"><span class="logo-line1">Lumina</span><span class="logo-line2">Pixel Studio</span></span>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-right" id="navRight">
+      <nav class="tabs" id="navTabs">
+        <a href="index.html" data-tab="home">Home</a>
+        <a href="portfolio.html" data-tab="portfolio">Portfolio</a>
+        <a href="reviews.html" data-tab="reviews">Reviews</a>
+        <a href="pricing.html" data-tab="pricing">Pricing</a>
+      </nav>
+      <a href="contact.html" class="tabbar-cta">Start a project</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="page-head wrap reveal">
+    <div class="eyebrow">Plans &amp; pricing</div>
+    <h1>Pricing</h1>
+    <p>Simple, transparent plans — from a one-off build to ongoing care and growth.</p>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <div class="pricing-grid">
+
+        <div class="browser price-card reveal">
+          <div class="browser-bar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <div class="url-pill mono">plan/launch</div>
+          </div>
+          <div class="price-body">
+            <h3 class="price-name">Launch</h3>
+            <p class="price-tagline">A professional website, built right.</p>
+            <div class="price-amount"><span class="price-figure">$900</span><span class="price-period">one-time</span></div>
+            <ul class="price-features">
+              <li>Custom-designed site (up to 5 pages)</li>
+              <li>Mobile responsive, fast-loading</li>
+              <li>Contact form included</li>
+              <li>Basic on-page SEO</li>
+              <li>2 rounds of revisions</li>
+            </ul>
+            <a href="contact.html" class="btn btn-ghost price-cta">Start a project</a>
+          </div>
+        </div>
+
+        <div class="browser price-card price-featured reveal">
+          <div class="price-badge">Most popular</div>
+          <div class="browser-bar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <div class="url-pill mono">plan/grow</div>
+          </div>
+          <div class="price-body">
+            <h3 class="price-name">Grow</h3>
+            <p class="price-tagline">Your site, built and looked after.</p>
+            <div class="price-amount"><span class="price-figure">$75</span><span class="price-period">/month + build</span></div>
+            <ul class="price-features">
+              <li>Everything in Launch</li>
+              <li>Uptime &amp; downtime monitoring</li>
+              <li>Security &amp; software updates</li>
+              <li>Regular automated backups</li>
+              <li>2 hrs/month of content edits</li>
+            </ul>
+            <a href="contact.html" class="btn btn-primary price-cta">Start a project</a>
+          </div>
+        </div>
+
+        <div class="browser price-card reveal">
+          <div class="browser-bar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <div class="url-pill mono">plan/scale</div>
+          </div>
+          <div class="price-body">
+            <h3 class="price-name">Scale</h3>
+            <p class="price-tagline">For businesses ready to grow online.</p>
+            <div class="price-amount"><span class="price-figure">$250</span><span class="price-period">/month + build</span></div>
+            <ul class="price-features">
+              <li>Everything in Grow</li>
+              <li>E-commerce or booking setup</li>
+              <li>Monthly SEO &amp; performance report</li>
+              <li>Priority turnaround on requests</li>
+              <li>5 hrs/month of content edits</li>
+            </ul>
+            <a href="contact.html" class="btn btn-ghost price-cta">Start a project</a>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="price-note reveal">Every project starts with a free 15-minute consultation to scope out what you actually need — prices vary with complexity and are confirmed before any work begins.</p>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
