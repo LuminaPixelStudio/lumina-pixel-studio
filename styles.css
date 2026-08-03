@@ -359,15 +359,22 @@ section{ padding:60px 0 90px; }
 @media (max-width:960px){ .pricing-grid{ grid-template-columns:1fr; max-width:420px; margin:0 auto; } }
 
 .sale-banner{
-  text-align:center; font-family:'JetBrains Mono', monospace; font-weight:700;
-  font-size:0.9rem; letter-spacing:0.03em; color:#171308;
+  text-align:center; color:#171308;
   background:linear-gradient(90deg, var(--accent), #ffcf85);
-  padding:12px 20px; border-radius:100px; margin-bottom:36px;
+  padding:16px 20px; border-radius:16px; margin-bottom:36px;
+  display:flex; flex-direction:column; gap:4px;
+}
+.sale-banner-title{
+  font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:1.25rem;
+}
+.sale-banner-sub{
+  font-family:'JetBrains Mono', monospace; font-weight:600; font-size:0.85rem;
+  letter-spacing:0.03em;
 }
 
 .price-card{
   position:relative; background:#000000;
-  border-radius:var(--radius); overflow:hidden;
+  border-radius:var(--radius);
   transition:transform 0.25s ease, box-shadow 0.25s ease;
 }
 .price-card:hover{ transform:translateY(-5px); }
