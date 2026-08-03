@@ -67,15 +67,36 @@
                   <input id="name" name="name" type="text" placeholder="Your name" required>
                 </div>
                 <div class="field">
-                  <label for="email">Email</label>
+                  <label for="business">Business name <span class="optional">(optional)</span></label>
+                  <input id="business" name="business" type="text" placeholder="Your business name">
+                </div>
+                <div class="field">
+                  <label for="email">Email address</label>
                   <input id="email" name="email" type="email" placeholder="you@company.com" required>
                 </div>
                 <div class="field">
+                  <label for="phone">Phone number <span class="optional">(optional)</span></label>
+                  <input id="phone" name="phone" type="tel" placeholder="Your phone number">
+                </div>
+                <div class="field">
+                  <label for="need">What do you need?</label>
+                  <select id="need" name="need" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="New website">New website</option>
+                    <option value="Website redesign">Website redesign</option>
+                    <option value="E-commerce store">E-commerce store</option>
+                    <option value="Website maintenance">Website maintenance</option>
+                    <option value="SEO">SEO</option>
+                    <option value="Something else">Something else</option>
+                  </select>
+                </div>
+                <div class="field">
                   <label for="message">Project details</label>
-                  <textarea id="message" name="message" rows="4" placeholder="What are you building, and what's your timeline?" required></textarea>
+                  <textarea id="message" name="message" rows="6" placeholder="Tell me about your business and what you're looking for." required></textarea>
                 </div>
               </div>
               <button type="submit" class="submit-btn">Send message</button>
+              <p class="form-reassurance">I'll get back to you within one business day.</p>
               <p class="form-status" id="formStatus" role="status"></p>
             </form>
           </div>
