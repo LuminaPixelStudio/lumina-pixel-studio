@@ -62,7 +62,7 @@ header.tabbar{
 .tabbar-inner{
   max-width:var(--maxw); margin:0 auto; padding:0 28px;
   display:flex; align-items:center; justify-content:space-between;
-  height:64px;
+  height:84px;
 }
 .nav-right{ display:flex; align-items:center; gap:18px; }
 .menu-toggle{
@@ -78,21 +78,10 @@ header.tabbar{
 .menu-toggle.open span:nth-child(2){ opacity:0; }
 .menu-toggle.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
 .logo{
-  display:flex; align-items:center; gap:10px;
-  font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:1.05rem;
+  display:flex; align-items:center;
 }
-.logo-mark{
-  width:30px; height:30px; border-radius:8px;
-  background:linear-gradient(135deg, var(--accent), var(--accent-2));
-  display:flex; align-items:center; justify-content:center;
-  color:#10131a; font-weight:700; font-size:0.85rem;
-  flex-shrink:0;
-}
-.logo-text{ display:flex; flex-direction:column; line-height:1.15; }
-.logo-line1{ font-weight:700; font-size:1.02rem; }
-.logo-line2{
-  font-family:'JetBrains Mono', monospace; font-weight:500; font-size:0.66rem;
-  letter-spacing:0.04em; color:var(--text-dim); text-transform:uppercase;
+.logo-img{
+  height:64px; width:auto; display:block; flex-shrink:0;
 }
 nav.tabs{ display:flex; gap:4px; }
 nav.tabs a{
@@ -143,9 +132,7 @@ nav.tabs a.active::after{
   }
 }
 @media (max-width:400px){
-  .logo-line1{ font-size:0.92rem; }
-  .logo-line2{ font-size:0.6rem; }
-  .logo-mark{ width:26px; height:26px; font-size:0.78rem; }
+  .logo-img{ height:50px; }
 }
 
 /* ---------------- shared "browser window" chrome ---------------- */
@@ -231,7 +218,7 @@ body.home-page{ overflow:hidden; height:100%; }
 .hero-center .feature-row{ margin-top:22px; }
 
 /* ---------------- HERO (home page only) ---------------- */
-section.hero{ padding:0; height:calc(100vh - 65px); width:100%; display:flex; align-items:center; }
+section.hero{ padding:0; height:calc(100vh - 85px); width:100%; display:flex; align-items:center; }
 
 .eyebrow-top{
   position:absolute; top:28px; left:50%; transform:translateX(-50%);
