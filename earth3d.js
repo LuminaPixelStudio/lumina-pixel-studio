@@ -37,7 +37,6 @@
 
   var renderer, scene, camera, clock;
   var earthGroup, earthMesh, cloudMesh;
-  var stars;
   var rafId = null;
   var disposed = false;
   var resizeTimer = null;
@@ -84,48 +83,6 @@
       transparent: true,
       depthWrite: false
     });
-  }
-
-  function buildStarSprite() {
-    var size = 64;
-    var c = document.createElement('canvas');
-    c.width = c.height = size;
-    var ctx = c.getContext('2d');
-    var grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-    grad.addColorStop(0, 'rgba(255,255,255,1)');
-    grad.addColorStop(0.25, 'rgba(255,255,255,0.95)');
-    grad.addColorStop(0.55, 'rgba(255,255,255,0.35)');
-    grad.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, size, size);
-    var tex = new THREE.CanvasTexture(c);
-    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
-    return tex;
-  }
-
-  function buildStarfield(count, sprite) {
-    var positions = new Float32Array(count * 3);
-    for (var i = 0; i < count; i++) {
-      var radius = 40 + Math.random() * 60;
-      var theta = Math.random() * Math.PI * 2;
-      var phi = Math.acos((Math.random() * 2) - 1);
-      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = radius * Math.cos(phi) - 15;
-    }
-    var geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    var mat = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: isSmallScreen ? 1.3 : 1.6,
-      sizeAttenuation: true, // points nearer camera (radius closer to 40) read larger/brighter
-      map: sprite,
-      alphaTest: 0.02,
-      transparent: true,
-      opacity: 0.9,
-      depthWrite: false
-    });
-    return new THREE.Points(geo, mat);
   }
 
   function composeEarthPosition() {
@@ -228,9 +185,6 @@
       buildAtmosphereMaterial(0x3572d6, 0.3, 4.0)
     );
     earthGroup.add(halo);
-
-    stars = buildStarfield(isSmallScreen ? 220 : 700, buildStarSprite());
-    scene.add(stars);
 
     window.addEventListener('resize', onResize, { passive: true });
     canvas.addEventListener('pointerdown', onPointerDown);
@@ -396,8 +350,6 @@
         cloudMesh.rotation.x = earthMesh.rotation.x;
       }
     }
-
-    if (stars) stars.rotation.y += 0.0015 * delta;
 
     renderer.render(scene, camera);
     rafId = requestAnimationFrame(animate);
