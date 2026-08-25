@@ -46,6 +46,13 @@
   var mouseX = 0, mouseY = 0, lastMoveTime = 0;
   var parallaxX = 0, parallaxY = 0;
 
+  var isDragging = false;
+  var dragLastX = 0, dragLastY = 0, dragLastT = 0;
+  var spinVelocityY = baseRotationSpeed; // radians/sec, drag-driven; settles back to baseRotationSpeed
+  var spinVelocityX = 0;
+  var cloudDrift = 0;
+  var DRAG_TO_RADIANS = 0.012; // sensitivity: screen px of drag -> radians of spin
+
   var sunDirection = new THREE.Vector3(4.2, 1.4, 3.6).normalize();
 
   function buildAtmosphereMaterial(color, coefficient, power) {
@@ -207,6 +214,7 @@
     scene.add(stars);
 
     window.addEventListener('resize', onResize, { passive: true });
+    canvas.addEventListener('pointerdown', onPointerDown);
     if (!prefersReducedMotion) {
       window.addEventListener('mousemove', onMouseMove, { passive: true });
       document.addEventListener('visibilitychange', onVisibilityChange);
@@ -233,6 +241,78 @@
     mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
     mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     lastMoveTime = performance.now();
+  }
+
+  function onPointerDown(e) {
+    if (!earthMesh) return;
+    isDragging = true;
+    dragLastX = e.clientX;
+    dragLastY = e.clientY;
+    dragLastT = performance.now();
+    spinVelocityY = 0;
+    spinVelocityX = 0;
+    canvas.style.cursor = 'grabbing';
+    if (canvas.setPointerCapture) {
+      try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    }
+    // Reduced motion normally skips the render loop entirely; a drag is
+    // direct user input, not automatic motion, so it's fine to redraw
+    // while it's happening — momentum/auto-rotation still stay off.
+    if (prefersReducedMotion && !rafId) {
+      rafId = requestAnimationFrame(animate);
+    }
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+  }
+
+  function onPointerMove(e) {
+    if (!isDragging || !earthMesh) return;
+    var now = performance.now();
+    var dt = Math.max((now - dragLastT) / 1000, 0.001);
+    var dx = e.clientX - dragLastX;
+    var dy = e.clientY - dragLastY;
+
+    earthMesh.rotation.y += dx * DRAG_TO_RADIANS;
+    earthMesh.rotation.x = THREE.MathUtils.clamp(
+      earthMesh.rotation.x + dy * DRAG_TO_RADIANS * 0.6, -0.6, 0.6
+    );
+    if (cloudMesh) {
+      cloudMesh.rotation.y = earthMesh.rotation.y + cloudDrift;
+      cloudMesh.rotation.x = earthMesh.rotation.x;
+    }
+
+    // Smoothed instantaneous velocity, carried forward as momentum on release.
+    spinVelocityY = spinVelocityY * 0.6 + ((dx * DRAG_TO_RADIANS) / dt) * 0.4;
+    spinVelocityX = spinVelocityX * 0.6 + ((dy * DRAG_TO_RADIANS * 0.6) / dt) * 0.4;
+
+    dragLastX = e.clientX;
+    dragLastY = e.clientY;
+    dragLastT = now;
+    lastMoveTime = now;
+
+    if (prefersReducedMotion && renderer) {
+      renderer.render(scene, camera);
+    }
+  }
+
+  function onPointerUp() {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+
+    if (prefersReducedMotion) {
+      // No momentum coast, no resuming auto-rotation — stop exactly
+      // where the visitor left it, per reduced-motion expectations.
+      spinVelocityY = 0;
+      spinVelocityX = 0;
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      if (renderer) renderer.render(scene, camera);
+    }
+    // Otherwise the running animate() loop eases spinVelocity back down
+    // to baseRotationSpeed on its own — see animate().
   }
 
   function onVisibilityChange() {
@@ -273,16 +353,30 @@
     var delta = Math.min(clock.getDelta(), 0.1);
 
     var idleFor = performance.now() - lastMoveTime;
-    var mouseActive = idleFor < 1200;
+    var mouseActive = idleFor < 1200 && !isDragging;
     var targetX = mouseActive ? mouseX * 0.14 : 0;
     var targetY = mouseActive ? mouseY * 0.08 : 0;
     parallaxX += (targetX - parallaxX) * 0.035;
     parallaxY += (targetY - parallaxY) * 0.035;
-
-    earthMesh.rotation.y += baseRotationSpeed * delta;
-    if (cloudMesh) cloudMesh.rotation.y += baseRotationSpeed * 1.15 * delta;
     earthGroup.rotation.y = parallaxX;
     earthGroup.rotation.x = parallaxY;
+
+    if (!isDragging) {
+      // Ease drag momentum (or a fresh page load's resting value) back
+      // toward the gentle ambient spin — never an abrupt snap.
+      var ease = Math.min(delta * 1.1, 1);
+      spinVelocityY += (baseRotationSpeed - spinVelocityY) * ease;
+      spinVelocityX += (0 - spinVelocityX) * Math.min(delta * 1.6, 1);
+      earthMesh.rotation.y += spinVelocityY * delta;
+      earthMesh.rotation.x = THREE.MathUtils.clamp(
+        earthMesh.rotation.x + spinVelocityX * delta, -0.6, 0.6
+      );
+      if (cloudMesh) {
+        cloudDrift += baseRotationSpeed * 0.15 * delta;
+        cloudMesh.rotation.y = earthMesh.rotation.y + cloudDrift;
+        cloudMesh.rotation.x = earthMesh.rotation.x;
+      }
+    }
 
     if (stars) stars.rotation.y += 0.0015 * delta;
 
@@ -298,6 +392,10 @@
     window.removeEventListener('resize', onResize);
     window.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('visibilitychange', onVisibilityChange);
+    canvas.removeEventListener('pointerdown', onPointerDown);
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
 
     if (scene) {
       scene.traverse(function (obj) {
