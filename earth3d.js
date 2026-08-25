@@ -1,17 +1,22 @@
 /* ============================================================
    Lumina — 3D Earth hero visual (homepage only)
 
-   Desktop: custom day/night shader (real terminator + city lights
-   on the dark side only), separate independently-drifting cloud
-   layer, Fresnel atmosphere rim + soft outer halo, starfield.
+   Rebuilt to use ONLY standard, well-tested Three.js material
+   properties rather than a hand-written shader:
+     map          = day/albedo colour texture
+     specularMap  = ocean mask (data, not colour)
+     emissive +
+     emissiveMap  = city lights (self-lit, so they read correctly
+                    regardless of the day/night lighting angle)
+   Lighting (one DirectionalLight "sun" + a low AmbientLight fill)
+   does the day/night shading — the same battle-tested lighting
+   model Three.js has used for a decade, instead of custom GLSL.
 
-   Mobile/low-power: a lighter MeshPhongMaterial globe (day map +
-   ocean specular only, no clouds/night layer) to keep payload and
-   shader cost down, per the responsive/performance requirements.
-
-   Progressive enhancement: if WebGL or the textures fail, nothing
-   renders here and the plain dark .site-bg gradient (set in
-   styles.css) stays visible — never a flat Earth photo.
+   Loading: nothing is added to the scene, and the canvas is never
+   revealed, until every texture has finished loading AND at least
+   one full frame has been rendered off-screen. This guarantees the
+   very first pixels the visitor sees are already correct — never a
+   flat colour, a placeholder, or a partially-textured globe.
    ============================================================ */
 (function () {
   var canvas = document.getElementById('earth3d-canvas');
@@ -36,58 +41,13 @@
   var stars;
   var rafId = null;
   var disposed = false;
+  var resizeTimer = null;
 
-  var baseRotationSpeed = (Math.PI * 2) / 115; // one full spin ~every 115s
+  var baseRotationSpeed = (Math.PI * 2) / 120; // one full spin ~every 120s
   var mouseX = 0, mouseY = 0, lastMoveTime = 0;
   var parallaxX = 0, parallaxY = 0;
 
-  var sunDirection = new THREE.Vector3(4.5, 1.6, 3.2).normalize();
-
-  var SHARED_VERTEX = [
-    'varying vec2 vUv;',
-    'varying vec3 vNormalW;',
-    'void main() {',
-    '  vUv = uv;',
-    '  vNormalW = normalize( mat3( modelMatrix ) * normal );',
-    '  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
-    '}'
-  ].join('\n');
-
-  var EARTH_FRAGMENT = [
-    'uniform sampler2D dayTexture;',
-    'uniform sampler2D nightTexture;',
-    'uniform sampler2D specularTexture;',
-    'uniform vec3 sunDirection;',
-    'varying vec2 vUv;',
-    'varying vec3 vNormalW;',
-    'void main() {',
-    '  vec3 dayColor = texture2D( dayTexture, vUv ).rgb;',
-    '  vec3 nightColor = texture2D( nightTexture, vUv ).rgb;',
-    '  float oceanMask = texture2D( specularTexture, vUv ).r;',
-    '  float sunAmount = dot( normalize(vNormalW), normalize(sunDirection) );',
-    '  float dayMix = smoothstep( -0.22, 0.35, sunAmount );',
-    '  vec3 color = mix( nightColor * 1.4, dayColor, dayMix );',
-    '  float spec = pow( max( sunAmount, 0.0 ), 18.0 ) * oceanMask * dayMix;',
-    '  color += vec3(0.85, 0.92, 1.0) * spec * 0.4;',
-    '  float terminatorGlow = (1.0 - abs(sunAmount)) * (1.0 - dayMix) * dayMix * 4.0;',
-    '  color += vec3(1.0, 0.55, 0.25) * clamp(terminatorGlow, 0.0, 1.0) * 0.12;',
-    '  gl_FragColor = vec4( color, 1.0 );',
-    '}'
-  ].join('\n');
-
-  var CLOUD_FRAGMENT = [
-    'uniform sampler2D cloudsTexture;',
-    'uniform vec3 sunDirection;',
-    'varying vec2 vUv;',
-    'varying vec3 vNormalW;',
-    'void main() {',
-    '  vec4 cloudSample = texture2D( cloudsTexture, vUv );',
-    '  float sunAmount = dot( normalize(vNormalW), normalize(sunDirection) );',
-    '  float dayMix = smoothstep( -0.3, 0.25, sunAmount );',
-    '  float alpha = cloudSample.a * mix(0.12, 0.8, dayMix);',
-    '  gl_FragColor = vec4( cloudSample.rgb, alpha );',
-    '}'
-  ].join('\n');
+  var sunDirection = new THREE.Vector3(4.2, 1.4, 3.6).normalize();
 
   function buildAtmosphereMaterial(color, coefficient, power) {
     return new THREE.ShaderMaterial({
@@ -134,22 +94,29 @@
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     var mat = new THREE.PointsMaterial({
       color: 0xffffff,
-      size: isSmallScreen ? 0.9 : 1.1,
+      size: isSmallScreen ? 0.85 : 1.05,
       sizeAttenuation: true,
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.55,
       depthWrite: false
     });
     return new THREE.Points(geo, mat);
   }
 
   function composeEarthPosition() {
-    // Large globe entering from the right edge; tucked lower on small
-    // screens so it sits clear of the (full-width, top-anchored) text.
+    // Large globe on the right, extending off the edge, but with a
+    // clear gap from the text column so it doesn't crowd the headline.
     if (isSmallScreen) {
-      return { x: 1.7, y: -2.55, radius: 2.05 };
+      return { x: 1.55, y: -2.5, radius: 1.9 };
     }
-    return { x: 3.55, y: -0.35, radius: 2.7 };
+    return { x: 4.05, y: -0.3, radius: 2.35 };
+  }
+
+  function prepColorTexture(tex, maxAniso) {
+    if (!tex) return;
+    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+    tex.anisotropy = maxAniso;
+    tex.needsUpdate = true;
   }
 
   function init(loaded, isPremium) {
@@ -169,8 +136,19 @@
       renderer.toneMappingExposure = 1.05;
     }
 
+    // Colour textures need sRGB decoding explicitly — this was the root
+    // cause of the earlier washed-out/incorrect-colour globe. The
+    // specular map is a data mask, not colour, so it's left as-is.
     var maxAniso = renderer.capabilities.getMaxAnisotropy ? renderer.capabilities.getMaxAnisotropy() : 1;
-    if (loaded.day) loaded.day.anisotropy = maxAniso;
+    prepColorTexture(loaded.day, maxAniso);
+    prepColorTexture(loaded.night, maxAniso);
+    prepColorTexture(loaded.clouds, maxAniso);
+    if (loaded.specular) loaded.specular.anisotropy = maxAniso;
+
+    var sun = new THREE.DirectionalLight(0xffffff, 1.35);
+    sun.position.copy(sunDirection).multiplyScalar(6);
+    scene.add(sun);
+    scene.add(new THREE.AmbientLight(0x1c2740, 0.4));
 
     var pos = composeEarthPosition();
     earthGroup = new THREE.Group();
@@ -178,52 +156,38 @@
     earthGroup.rotation.z = THREE.MathUtils.degToRad(-11);
     scene.add(earthGroup);
 
-    var segments = isSmallScreen ? 44 : 96;
+    var segments = isSmallScreen ? 48 : 100;
     var radius = pos.radius;
     var geometry = new THREE.SphereGeometry(radius, segments, segments);
 
-    var earthMaterial;
-    if (isPremium) {
-      earthMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-          dayTexture: { value: loaded.day },
-          nightTexture: { value: loaded.night },
-          specularTexture: { value: loaded.specular },
-          sunDirection: { value: sunDirection }
-        },
-        vertexShader: SHARED_VERTEX,
-        fragmentShader: EARTH_FRAGMENT
-      });
-    } else {
-      earthMaterial = new THREE.MeshPhongMaterial({
-        map: loaded.day,
-        specularMap: loaded.specular,
-        specular: new THREE.Color(0x2a2a2a),
-        shininess: 8
-      });
-      var sun = new THREE.DirectionalLight(0xffffff, 1.1);
-      sun.position.copy(sunDirection).multiplyScalar(6);
-      scene.add(sun);
-      scene.add(new THREE.AmbientLight(0x1c2740, 0.35));
+    var materialOptions = {
+      map: loaded.day,
+      specularMap: loaded.specular,
+      specular: new THREE.Color(0x333333),
+      shininess: 10
+    };
+    if (isPremium && loaded.night) {
+      materialOptions.emissive = new THREE.Color(0xffffff);
+      materialOptions.emissiveMap = loaded.night;
+      materialOptions.emissiveIntensity = 1.15;
     }
+    var earthMaterial = new THREE.MeshPhongMaterial(materialOptions);
 
     earthMesh = new THREE.Mesh(geometry, earthMaterial);
     earthMesh.rotation.y = Math.PI * 0.15;
     earthGroup.add(earthMesh);
 
     if (isPremium && loaded.clouds) {
-      var cloudGeometry = new THREE.SphereGeometry(radius * 1.012, segments, segments);
-      var cloudMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-          cloudsTexture: { value: loaded.clouds },
-          sunDirection: { value: sunDirection }
-        },
-        vertexShader: SHARED_VERTEX,
-        fragmentShader: CLOUD_FRAGMENT,
+      var cloudMaterial = new THREE.MeshLambertMaterial({
+        map: loaded.clouds,
         transparent: true,
+        opacity: 0.55,
         depthWrite: false
       });
-      cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+      cloudMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(radius * 1.012, segments, segments),
+        cloudMaterial
+      );
       cloudMesh.rotation.y = earthMesh.rotation.y;
       earthGroup.add(cloudMesh);
     }
@@ -235,29 +199,35 @@
     earthGroup.add(rim);
 
     var halo = new THREE.Mesh(
-      new THREE.SphereGeometry(radius * 1.3, Math.max(24, segments - 32), Math.max(24, segments - 32)),
+      new THREE.SphereGeometry(radius * 1.3, Math.max(24, segments - 36), Math.max(24, segments - 36)),
       buildAtmosphereMaterial(0x3572d6, 0.3, 4.0)
     );
     earthGroup.add(halo);
 
-    stars = buildStarfield(isSmallScreen ? 220 : 650);
+    stars = buildStarfield(isSmallScreen ? 200 : 600);
     scene.add(stars);
 
     window.addEventListener('resize', onResize, { passive: true });
-
     if (!prefersReducedMotion) {
       window.addEventListener('mousemove', onMouseMove, { passive: true });
       document.addEventListener('visibilitychange', onVisibilityChange);
     }
     window.addEventListener('pagehide', dispose);
 
-    document.body.classList.add('earth3d-active');
-
-    if (prefersReducedMotion) {
+    // Render at least one full frame while still fully transparent
+    // (opacity 0), THEN reveal on the following frame. By the time the
+    // fade-in transition starts, correct pixels already exist in the
+    // canvas — nothing incomplete or wrong is ever visible.
+    renderer.render(scene, camera);
+    requestAnimationFrame(function () {
       renderer.render(scene, camera);
-    } else {
-      rafId = requestAnimationFrame(animate);
-    }
+      document.body.classList.add('earth3d-active');
+      if (prefersReducedMotion) {
+        renderer.render(scene, camera);
+      } else {
+        rafId = requestAnimationFrame(animate);
+      }
+    });
   }
 
   function onMouseMove(e) {
@@ -277,15 +247,20 @@
   }
 
   function onResize() {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(handleResize, 250);
+  }
+
+  function handleResize() {
     if (!camera || !renderer) return;
-    var wasSmall = isSmallScreen;
-    isSmallScreen = window.innerWidth < 780;
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    // Crossing the small-screen breakpoint changes composition enough
-    // (layout, geometry detail, texture tier) that a soft reload of the
-    // scene is simpler and safer than trying to patch it live.
+
+    var wasSmall = isSmallScreen;
+    isSmallScreen = window.innerWidth < 780;
+    // Only rebuild the scene if the device tier actually changed
+    // (e.g. rotating a tablet) — not on routine window resizing.
     if (wasSmall !== isSmallScreen) {
       dispose();
       disposed = false;
@@ -320,6 +295,7 @@
     if (disposed) return;
     disposed = true;
     if (rafId) cancelAnimationFrame(rafId);
+    if (resizeTimer) clearTimeout(resizeTimer);
     window.removeEventListener('resize', onResize);
     window.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('visibilitychange', onVisibilityChange);
@@ -362,7 +338,7 @@
       if (pending <= 0 && !failed) callback(result, isPremium);
     }
     function fail() {
-      failed = true; // static dark background stays as-is; no crash
+      failed = true; // plain dark background stays visible; no broken globe
     }
 
     jobs.forEach(function (job) {
