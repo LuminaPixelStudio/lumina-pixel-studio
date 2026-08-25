@@ -226,6 +226,7 @@ section.hero{ position:relative; overflow:hidden; }
 
 .space-scrim{
   position:absolute; inset:0;
+  pointer-events:none;
   background:
     radial-gradient(ellipse 640px 520px at 26% 52%,
       rgba(3,5,10,0.78) 0%,

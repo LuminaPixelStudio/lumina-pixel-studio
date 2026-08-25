@@ -42,13 +42,13 @@
   var disposed = false;
   var resizeTimer = null;
 
-  var baseRotationSpeed = (Math.PI * 2) / 120; // one full spin ~every 120s
+  var baseRotationSpeed = 0; // no idle auto-rotation — the globe only moves when dragged
   var mouseX = 0, mouseY = 0, lastMoveTime = 0;
   var parallaxX = 0, parallaxY = 0;
 
   var isDragging = false;
   var dragLastX = 0, dragLastY = 0, dragLastT = 0;
-  var spinVelocityY = baseRotationSpeed; // radians/sec, drag-driven; settles back to baseRotationSpeed
+  var spinVelocityY = 0; // radians/sec, purely drag-driven momentum
   var spinVelocityX = 0;
   var cloudDrift = 0;
   var DRAG_TO_RADIANS = 0.012; // sensitivity: screen px of drag -> radians of spin
@@ -362,8 +362,8 @@
     earthGroup.rotation.x = parallaxY;
 
     if (!isDragging) {
-      // Ease drag momentum (or a fresh page load's resting value) back
-      // toward the gentle ambient spin — never an abrupt snap.
+      // Coast smoothly to a stop after a drag — no ambient spin to
+      // settle back into, since baseRotationSpeed is 0 (idle = still).
       var ease = Math.min(delta * 1.1, 1);
       spinVelocityY += (baseRotationSpeed - spinVelocityY) * ease;
       spinVelocityX += (0 - spinVelocityX) * Math.min(delta * 1.6, 1);
