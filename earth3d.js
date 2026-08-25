@@ -29,8 +29,7 @@
   // (NASA Blue Marble / Solar System Scope derived, CC BY 4.0).
   var TEX_BASE = 'https://threejs.org/examples/textures/planets/';
   var TEXTURES = {
-    day4k: TEX_BASE + 'earth_atmos_4096.jpg',
-    day2k: TEX_BASE + 'earth_atmos_2048.jpg',
+    day: TEX_BASE + 'earth_atmos_2048.jpg',
     specular: TEX_BASE + 'earth_specular_2048.jpg',
     night: TEX_BASE + 'earth_lights_2048.png',
     clouds: TEX_BASE + 'earth_clouds_1024.png'
@@ -324,27 +323,43 @@
     var loader = new THREE.TextureLoader();
     loader.crossOrigin = 'anonymous';
     var result = {};
-    var failed = false;
+    var requiredFailed = false;
     var isPremium = !isSmallScreen;
 
-    var jobs = isPremium
-      ? ['day4k:day', 'night:night', 'specular:specular', 'clouds:clouds']
-      : ['day2k:day', 'specular:specular'];
+    // day + specular are proven to load reliably — the globe requires
+    // them. night/clouds are enhancements only: if either 404s or errors,
+    // the globe still renders correctly, just without that extra layer,
+    // rather than the whole thing silently failing to appear at all.
+    var required = ['day:day', 'specular:specular'];
+    var optional = isPremium ? ['night:night', 'clouds:clouds'] : [];
 
-    var pending = jobs.length;
+    var requiredPending = required.length;
+    var optionalPending = optional.length;
 
-    function done() {
-      pending--;
-      if (pending <= 0 && !failed) callback(result, isPremium);
+    function tryFinish() {
+      if (requiredPending <= 0 && optionalPending <= 0 && !requiredFailed) {
+        callback(result, isPremium);
+      }
     }
-    function fail() {
-      failed = true; // plain dark background stays visible; no broken globe
-    }
 
-    jobs.forEach(function (job) {
+    required.forEach(function (job) {
       var parts = job.split(':');
-      var texKey = parts[0], resultKey = parts[1];
-      loader.load(TEXTURES[texKey], function (tex) { result[resultKey] = tex; done(); }, undefined, fail);
+      loader.load(
+        TEXTURES[parts[0]],
+        function (tex) { result[parts[1]] = tex; requiredPending--; tryFinish(); },
+        undefined,
+        function () { requiredFailed = true; } // plain dark background stays; no broken globe
+      );
+    });
+
+    optional.forEach(function (job) {
+      var parts = job.split(':');
+      loader.load(
+        TEXTURES[parts[0]],
+        function (tex) { result[parts[1]] = tex; optionalPending--; tryFinish(); },
+        undefined,
+        function () { optionalPending--; tryFinish(); } // just skip this layer
+      );
     });
   }
 
