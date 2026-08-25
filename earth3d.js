@@ -42,9 +42,6 @@
   var resizeTimer = null;
 
   var baseRotationSpeed = (Math.PI * 2) / 60; // one full spin ~every 60s (2x the original 120s pace)
-  var mouseX = 0, mouseY = 0, lastMoveTime = 0;
-  var parallaxX = 0, parallaxY = 0;
-
   var isDragging = false;
   var dragLastX = 0, dragLastY = 0, dragLastT = 0;
   var spinVelocityY = baseRotationSpeed; // radians/sec — idle spin, or drag momentum
@@ -189,7 +186,6 @@
     window.addEventListener('resize', onResize, { passive: true });
     canvas.addEventListener('pointerdown', onPointerDown);
     if (!prefersReducedMotion) {
-      window.addEventListener('mousemove', onMouseMove, { passive: true });
       document.addEventListener('visibilitychange', onVisibilityChange);
     }
     window.addEventListener('pagehide', dispose);
@@ -208,12 +204,6 @@
         rafId = requestAnimationFrame(animate);
       }
     });
-  }
-
-  function onMouseMove(e) {
-    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-    lastMoveTime = performance.now();
   }
 
   function onPointerDown(e) {
@@ -262,7 +252,6 @@
     dragLastX = e.clientX;
     dragLastY = e.clientY;
     dragLastT = now;
-    lastMoveTime = now;
 
     if (prefersReducedMotion && renderer) {
       renderer.render(scene, camera);
@@ -325,15 +314,6 @@
     if (disposed) return;
     var delta = Math.min(clock.getDelta(), 0.1);
 
-    var idleFor = performance.now() - lastMoveTime;
-    var mouseActive = idleFor < 1200 && !isDragging;
-    var targetX = mouseActive ? mouseX * 0.14 : 0;
-    var targetY = mouseActive ? mouseY * 0.08 : 0;
-    parallaxX += (targetX - parallaxX) * 0.035;
-    parallaxY += (targetY - parallaxY) * 0.035;
-    earthGroup.rotation.y = parallaxX;
-    earthGroup.rotation.x = parallaxY;
-
     if (!isDragging) {
       // Ease drag momentum back toward the gentle ambient spin — never
       // an abrupt snap.
@@ -361,7 +341,6 @@
     if (rafId) cancelAnimationFrame(rafId);
     if (resizeTimer) clearTimeout(resizeTimer);
     window.removeEventListener('resize', onResize);
-    window.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('visibilitychange', onVisibilityChange);
     canvas.removeEventListener('pointerdown', onPointerDown);
     window.removeEventListener('pointermove', onPointerMove);
