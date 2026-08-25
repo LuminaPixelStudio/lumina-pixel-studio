@@ -42,13 +42,13 @@
   var disposed = false;
   var resizeTimer = null;
 
-  var baseRotationSpeed = 0; // no idle auto-rotation — the globe only moves when dragged
+  var baseRotationSpeed = (Math.PI * 2) / 60; // one full spin ~every 60s (2x the original 120s pace)
   var mouseX = 0, mouseY = 0, lastMoveTime = 0;
   var parallaxX = 0, parallaxY = 0;
 
   var isDragging = false;
   var dragLastX = 0, dragLastY = 0, dragLastT = 0;
-  var spinVelocityY = 0; // radians/sec, purely drag-driven momentum
+  var spinVelocityY = baseRotationSpeed; // radians/sec — idle spin, or drag momentum
   var spinVelocityX = 0;
   var cloudDrift = 0;
   var DRAG_TO_RADIANS = 0.012; // sensitivity: screen px of drag -> radians of spin
@@ -86,7 +86,24 @@
     });
   }
 
-  function buildStarfield(count) {
+  function buildStarSprite() {
+    var size = 64;
+    var c = document.createElement('canvas');
+    c.width = c.height = size;
+    var ctx = c.getContext('2d');
+    var grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    grad.addColorStop(0, 'rgba(255,255,255,1)');
+    grad.addColorStop(0.25, 'rgba(255,255,255,0.95)');
+    grad.addColorStop(0.55, 'rgba(255,255,255,0.35)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+    var tex = new THREE.CanvasTexture(c);
+    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+    return tex;
+  }
+
+  function buildStarfield(count, sprite) {
     var positions = new Float32Array(count * 3);
     for (var i = 0; i < count; i++) {
       var radius = 40 + Math.random() * 60;
@@ -100,10 +117,12 @@
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     var mat = new THREE.PointsMaterial({
       color: 0xffffff,
-      size: isSmallScreen ? 0.85 : 1.05,
-      sizeAttenuation: true,
+      size: isSmallScreen ? 1.3 : 1.6,
+      sizeAttenuation: true, // points nearer camera (radius closer to 40) read larger/brighter
+      map: sprite,
+      alphaTest: 0.02,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.9,
       depthWrite: false
     });
     return new THREE.Points(geo, mat);
@@ -180,7 +199,7 @@
     var earthMaterial = new THREE.MeshPhongMaterial(materialOptions);
 
     earthMesh = new THREE.Mesh(geometry, earthMaterial);
-    earthMesh.rotation.y = Math.PI * 0.15;
+    earthMesh.rotation.y = Math.PI * 0.15 + Math.PI; // opposite hemisphere from the original start
     earthGroup.add(earthMesh);
 
     if (isPremium && loaded.clouds) {
@@ -210,7 +229,7 @@
     );
     earthGroup.add(halo);
 
-    stars = buildStarfield(isSmallScreen ? 200 : 600);
+    stars = buildStarfield(isSmallScreen ? 220 : 700, buildStarSprite());
     scene.add(stars);
 
     window.addEventListener('resize', onResize, { passive: true });
@@ -362,8 +381,8 @@
     earthGroup.rotation.x = parallaxY;
 
     if (!isDragging) {
-      // Coast smoothly to a stop after a drag — no ambient spin to
-      // settle back into, since baseRotationSpeed is 0 (idle = still).
+      // Ease drag momentum back toward the gentle ambient spin — never
+      // an abrupt snap.
       var ease = Math.min(delta * 1.1, 1);
       spinVelocityY += (baseRotationSpeed - spinVelocityY) * ease;
       spinVelocityX += (0 - spinVelocityX) * Math.min(delta * 1.6, 1);

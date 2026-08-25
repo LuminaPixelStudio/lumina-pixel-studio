@@ -44,15 +44,27 @@ body{
 }
 
 /* Homepage only: no Earth photograph in the background — the 3D globe is
-   the only Earth on this page. Plain deep space with a couple of very
-   faint colour washes standing in for distant nebula/Milky Way haze. */
+   the only Earth on this page. A richer deep-space backdrop: layered
+   colour washes for depth, plus a soft diagonal Milky Way-style band
+   sitting behind the (now centred) text on the left/upper-left. */
 body.home-page .site-bg{
   background-image:none;
-  background-color:#04060b;
+  background-color:#03040a;
   background:
-    radial-gradient(ellipse 60vw 60vh at 78% 38%, rgba(60,90,160,0.16), transparent 60%),
-    radial-gradient(ellipse 50vw 50vh at 12% 82%, rgba(90,60,150,0.10), transparent 55%),
-    #04060b;
+    /* soft hazy "Milky Way" band, upper-left toward centre */
+    linear-gradient(115deg,
+      transparent 0%,
+      rgba(120,110,170,0.05) 18%,
+      rgba(150,140,190,0.10) 30%,
+      rgba(130,120,180,0.07) 42%,
+      transparent 58%),
+    radial-gradient(ellipse 46vw 30vh at 24% 30%, rgba(140,130,200,0.09), transparent 65%),
+    radial-gradient(ellipse 40vw 26vh at 14% 44%, rgba(100,110,190,0.08), transparent 60%),
+    /* general depth washes */
+    radial-gradient(ellipse 55vw 55vh at 80% 34%, rgba(60,95,170,0.15), transparent 62%),
+    radial-gradient(ellipse 48vw 48vh at 10% 84%, rgba(85,55,145,0.08), transparent 55%),
+    radial-gradient(ellipse 70vw 70vh at 50% 50%, rgba(18,22,40,0.5), transparent 75%),
+    #03040a;
 }
 
 /* ---------------- 3D Earth (homepage hero) ----------------
@@ -228,12 +240,12 @@ section.hero{ position:relative; overflow:hidden; }
   position:absolute; inset:0;
   pointer-events:none;
   background:
-    radial-gradient(ellipse 640px 520px at 26% 52%,
-      rgba(3,5,10,0.78) 0%,
-      rgba(3,5,10,0.5) 45%,
-      rgba(3,5,10,0.15) 72%,
+    radial-gradient(ellipse 700px 540px at 50% 48%,
+      rgba(3,5,10,0.72) 0%,
+      rgba(3,5,10,0.46) 45%,
+      rgba(3,5,10,0.14) 72%,
       transparent 88%),
-    linear-gradient(to right, rgba(3,5,10,0.5) 0%, rgba(3,5,10,0.15) 38%, transparent 62%);
+    linear-gradient(to bottom, rgba(3,5,10,0.3) 0%, rgba(3,5,10,0.06) 25%, rgba(3,5,10,0.14) 75%, rgba(3,5,10,0.45) 100%);
 }
 
 
@@ -247,7 +259,12 @@ body.home-page{ overflow:hidden; height:100%; }
 }
 .hero-center .hero-sub{ margin-left:auto; margin-right:auto; }
 .hero-center .btn-row{ justify-content:center; }
-.hero-center .feature-row{ margin-top:22px; }
+.hero-center .feature-row{
+  margin-top:22px;
+  flex-direction:row; flex-wrap:wrap; justify-content:center; align-items:flex-start;
+  gap:28px;
+}
+.hero-center .feature-item{ max-width:200px; text-align:left; }
 
 .hero-left{
   position:relative; z-index:1;
@@ -310,9 +327,8 @@ h1.headline{
 
 @media (max-width:640px){
   section.hero{ padding:0; }
-  .eyebrow-top{ top:14px; font-size:0.7rem; left:20px; transform:none; }
+  .eyebrow-top{ top:14px; font-size:0.7rem; }
   .hero-center{ padding-top:44px; padding-bottom:16px; }
-  .hero-left{ padding-top:56px; padding-bottom:16px; max-width:100%; }
   h1.headline{ font-size:clamp(1.6rem, 6vw, 2.6rem); margin-bottom:12px; }
   .hero-sub{ font-size:0.92rem; margin-bottom:20px; }
   .btn-row{ margin-bottom:20px; }
