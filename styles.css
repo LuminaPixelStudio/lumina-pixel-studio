@@ -43,10 +43,24 @@ body{
   background-repeat:no-repeat;
 }
 
+/* Homepage only: no Earth photograph in the background — the 3D globe is
+   the only Earth on this page. Plain deep space with a couple of very
+   faint colour washes standing in for distant nebula/Milky Way haze. */
+body.home-page .site-bg{
+  background-image:none;
+  background-color:#04060b;
+  background:
+    radial-gradient(ellipse 60vw 60vh at 78% 38%, rgba(60,90,160,0.16), transparent 60%),
+    radial-gradient(ellipse 50vw 50vh at 12% 82%, rgba(90,60,150,0.10), transparent 55%),
+    #04060b;
+}
+
 /* ---------------- 3D Earth (homepage hero) ----------------
-   Progressive enhancement over the static .site-bg photo above:
-   the canvas fades in only once WebGL + textures load successfully;
-   .site-bg stays as the visible fallback until (or unless) that happens. */
+   Progressive enhancement: the canvas (globe + stars) fades in once
+   WebGL + textures load successfully. Underneath it, .site-bg's plain
+   dark gradient above is always there as a safe, photo-free fallback
+   if WebGL is unavailable — the page never falls back to a flat Earth
+   image on this page. */
 #earth3d-canvas{
   position:fixed; inset:0; z-index:-1;
   width:100%; height:100%; display:block;
@@ -54,13 +68,9 @@ body{
   opacity:0;
   transition:opacity 1.4s ease;
 }
-body.earth3d-active .site-bg{
-  opacity:0;
-  transition:opacity 1.1s ease;
-}
 body.earth3d-active #earth3d-canvas{ opacity:1; }
 @media (prefers-reduced-motion: reduce){
-  #earth3d-canvas, body.earth3d-active .site-bg{ transition:none; }
+  #earth3d-canvas{ transition:none; }
 }
 
 h1,h2,h3{ font-family:'Space Grotesk', sans-serif; letter-spacing:-0.02em; }
@@ -216,12 +226,12 @@ section.hero{ position:relative; overflow:hidden; }
 .space-scrim{
   position:absolute; inset:0;
   background:
-    radial-gradient(ellipse 620px 460px at 50% 55%,
-      rgba(6,8,14,0.82) 0%,
-      rgba(6,8,14,0.55) 45%,
-      rgba(6,8,14,0.15) 72%,
+    radial-gradient(ellipse 640px 520px at 26% 52%,
+      rgba(3,5,10,0.78) 0%,
+      rgba(3,5,10,0.5) 45%,
+      rgba(3,5,10,0.15) 72%,
       transparent 88%),
-    linear-gradient(to bottom, rgba(6,8,14,0.35) 0%, rgba(6,8,14,0.05) 30%, rgba(6,8,14,0.15) 75%, rgba(6,8,14,0.55) 100%);
+    linear-gradient(to right, rgba(3,5,10,0.5) 0%, rgba(3,5,10,0.15) 38%, transparent 62%);
 }
 
 
@@ -236,6 +246,12 @@ body.home-page{ overflow:hidden; height:100%; }
 .hero-center .hero-sub{ margin-left:auto; margin-right:auto; }
 .hero-center .btn-row{ justify-content:center; }
 .hero-center .feature-row{ margin-top:22px; }
+
+.hero-left{
+  position:relative; z-index:1;
+  max-width:520px;
+  padding:30px 0;
+}
 
 /* ---------------- HERO (home page only) ---------------- */
 section.hero{ padding:0; height:calc(100vh - 85px); width:100%; display:flex; align-items:center; }
@@ -275,10 +291,10 @@ h1.headline{
 .btn-ghost:hover{ border-color:var(--accent-2); color:var(--accent-2); }
 
 .feature-row{
-  display:flex; justify-content:center; gap:28px; flex-wrap:wrap;
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-start; gap:14px;
 }
 .feature-item{
-  flex:1 1 170px; max-width:200px; text-align:left;
+  flex:none; max-width:460px; text-align:left;
 }
 .feature-heading{
   display:flex; align-items:center; gap:8px; margin-bottom:5px;
@@ -292,29 +308,27 @@ h1.headline{
 
 @media (max-width:640px){
   section.hero{ padding:0; }
-  .eyebrow-top{ top:14px; font-size:0.7rem; }
+  .eyebrow-top{ top:14px; font-size:0.7rem; left:20px; transform:none; }
   .hero-center{ padding-top:44px; padding-bottom:16px; }
+  .hero-left{ padding-top:56px; padding-bottom:16px; max-width:100%; }
   h1.headline{ font-size:clamp(1.6rem, 6vw, 2.6rem); margin-bottom:12px; }
   .hero-sub{ font-size:0.92rem; margin-bottom:20px; }
   .btn-row{ margin-bottom:20px; }
-  .feature-row{ gap:14px; }
-  .feature-item{ flex:1 1 130px; max-width:150px; text-align:center; }
-  .feature-heading{ justify-content:center; margin-bottom:3px; }
+  .feature-row{ gap:10px; }
+  .feature-heading{ margin-bottom:3px; }
   .feature-icon{ font-size:1rem; }
   .feature-title{ font-size:0.68rem; }
   .feature-desc{ font-size:0.7rem; line-height:1.3; }
   .space-scrim{
     background:
-      radial-gradient(ellipse 92vw 55vh at 50% 55%,
-        rgba(6,8,14,0.86) 0%, rgba(6,8,14,0.6) 45%,
-        rgba(6,8,14,0.2) 72%, transparent 88%),
-      linear-gradient(to bottom, rgba(6,8,14,0.45) 0%, rgba(6,8,14,0.1) 30%, rgba(6,8,14,0.25) 75%, rgba(6,8,14,0.65) 100%);
+      radial-gradient(ellipse 94vw 46vh at 50% 40%,
+        rgba(3,5,10,0.82) 0%, rgba(3,5,10,0.55) 45%,
+        rgba(3,5,10,0.2) 72%, transparent 88%),
+      linear-gradient(to bottom, rgba(3,5,10,0.3) 0%, rgba(3,5,10,0.05) 30%, rgba(3,5,10,0.35) 78%, rgba(3,5,10,0.7) 100%);
   }
 }
 @media (max-width:400px){
   .wrap{ padding:0 18px; }
-  .feature-row{ flex-direction:column; align-items:center; gap:10px; }
-  .feature-item{ max-width:260px; }
   .btn{ padding:12px 20px; font-size:0.88rem; }
 }
 
