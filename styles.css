@@ -386,6 +386,9 @@ section{ padding:60px 0 90px; }
 .pricing-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:24px; align-items:start; max-width:760px; margin:0 auto; }
 @media (max-width:960px){ .pricing-grid{ grid-template-columns:1fr; max-width:420px; margin:0 auto; } }
 
+.pricing-single{ max-width:440px; margin:0 auto; }
+.price-fine-note{ color:var(--text-dim); font-size:0.8rem; line-height:1.45; margin:-10px 0 26px; }
+
 .value-banner{
   text-align:center; background:var(--panel); border:1px solid var(--line);
   border-radius:16px; padding:26px 24px; margin-bottom:36px;
@@ -397,6 +400,10 @@ section{ padding:60px 0 90px; }
 .value-checklist{
   display:flex; justify-content:center; flex-wrap:wrap; gap:10px 22px;
   font-family:'JetBrains Mono', monospace; font-size:0.8rem; color:var(--accent-2);
+}
+.value-banner p:not(.value-statement){
+  color:var(--text-dim); font-size:0.92rem; line-height:1.65;
+  max-width:64ch; margin:0 auto;
 }
 
 .price-card{
